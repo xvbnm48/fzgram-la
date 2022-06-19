@@ -3,8 +3,9 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Post = require("../models/post");
 const requireLogin = require("../middleware/requireLogin");
+const post = require("../models/post");
 
-router.post("/createPost", requireLogin, (req, res) => {
+router.post("/createpost", requireLogin, (req, res) => {
   const { title, body } = req.body;
   if (!title || !body) {
     return res.status(400).json({ msg: "Please enter all fields" });
@@ -27,4 +28,36 @@ router.post("/createPost", requireLogin, (req, res) => {
     });
 });
 
+router.post("/createPost", requireLogin, async (req, res) => {
+  const { title, body } = req.body;
+  if (!title || !body) {
+    return res.status(400).json({ msg: "Please enter all fields" });
+  }
+  // const newPost = new post(req.body);
+  req.user.password = undefined;
+  const post = new Post({
+    title,
+    body,
+    postedBy: req.user,
+  });
+  try {
+    await post.save();
+    res.json({ post: post });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+router.get("/allpost", async (req, res) => {
+  try {
+    await Post.find()
+      .populate("postedBy", "_id name")
+      .then((posts) => {
+        res.json(posts);
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
 module.exports = router;
