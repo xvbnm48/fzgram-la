@@ -60,4 +60,18 @@ router.get("/allpost", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+router.get("/myPost", requireLogin, async (req, res) => {
+  try {
+    await post
+      .find({ postedBy: req.user._id })
+      .populate("postedBy", "_id name")
+      .then((posts) => {
+        return res.json({ myposts });
+      });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+});
+
 module.exports = router;
