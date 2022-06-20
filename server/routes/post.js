@@ -6,8 +6,8 @@ const requireLogin = require("../middleware/requireLogin");
 const post = require("../models/post");
 
 router.post("/createpost", requireLogin, (req, res) => {
-  const { title, body } = req.body;
-  if (!title || !body) {
+  const { title, body, pic } = req.body;
+  if (!title || !body || !pic) {
     return res.status(400).json({ error: "Please enter all fields" });
   }
   console.log(req.user);
@@ -16,6 +16,7 @@ router.post("/createpost", requireLogin, (req, res) => {
   const post = new Post({
     title,
     body,
+    photo: pic,
     postedBy: req.user,
   });
   post
@@ -29,8 +30,9 @@ router.post("/createpost", requireLogin, (req, res) => {
 });
 
 router.post("/createPost", requireLogin, async (req, res) => {
-  const { title, body } = req.body;
-  if (!title || !body) {
+  const { title, body, pic } = req.body;
+  // console.log(title, body, pic);
+  if (!title || !body || !pic) {
     return res.status(400).json({ error: "Please enter all fields" });
   }
   // const newPost = new post(req.body);
@@ -38,6 +40,7 @@ router.post("/createPost", requireLogin, async (req, res) => {
   const post = new Post({
     title,
     body,
+    photo: pic,
     postedBy: req.user,
   });
   try {
