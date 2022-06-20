@@ -8,7 +8,7 @@ const post = require("../models/post");
 router.post("/createpost", requireLogin, (req, res) => {
   const { title, body } = req.body;
   if (!title || !body) {
-    return res.status(400).json({ msg: "Please enter all fields" });
+    return res.status(400).json({ error: "Please enter all fields" });
   }
   console.log(req.user);
   //   res.send("ok");
@@ -31,7 +31,7 @@ router.post("/createpost", requireLogin, (req, res) => {
 router.post("/createPost", requireLogin, async (req, res) => {
   const { title, body } = req.body;
   if (!title || !body) {
-    return res.status(400).json({ msg: "Please enter all fields" });
+    return res.status(400).json({ error: "Please enter all fields" });
   }
   // const newPost = new post(req.body);
   req.user.password = undefined;
