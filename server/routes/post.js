@@ -51,17 +51,26 @@ router.post("/createPost", requireLogin, async (req, res) => {
   }
 });
 
-router.get("/allpost", async (req, res) => {
-  try {
-    await Post.find()
-      .populate("postedBy", "_id name")
-      .then((posts) => {
-        res.json(posts);
-      });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
+router.get("/allpost", requireLogin, (req, res) => {
+  // try {
+  //   await Post.find()
+  //     .populate("postedBy", "_id name")
+  //     .then((posts) => {
+  //       res.json({ posts });
+  //     });
+  // } catch (error) {
+  //   console.log(error);
+  //   res.status(500).send(error);
+  // }
+  Post.find()
+    .populate("postedBy", "_id name")
+    // .populate("comments.postedBy", "_id name")
+    .then((posts) => {
+      res.json({ posts });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 router.get("/myPost", requireLogin, async (req, res) => {
