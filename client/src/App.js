@@ -6,6 +6,7 @@ import Home from "./components/screens/Home";
 import SignIn from "./components/screens/SignIn";
 import Signup from "./components/screens/Signup";
 import Profile from "./components/screens/Profile.js";
+import UserProfile from "./components/screens/UserProfile";
 import CretePost from "./components/screens/CretePost";
 import { reducer, initialState } from "./reducers/userReducer";
 
@@ -34,11 +35,14 @@ const Routing = () => {
       <Route path="/signup">
         <Signup />
       </Route>
-      <Route path="/profile">
+      <Route exact path="/profile">
         <Profile />
       </Route>
       <Route path="/create">
         <CretePost />
+      </Route>
+      <Route path={"/profile/:userId"}>
+        <UserProfile />
       </Route>
     </Switch>
   );

@@ -11,11 +11,13 @@ const Profile = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        // console.log(result);
+        console.log(result);
+        console.log(state);
         setPics(result.myposts);
       });
   }, []);
   return (
+    // console.log(state);
     <div style={{ maxWidth: "550px", margin: "0px auto" }}>
       <div
         style={{
