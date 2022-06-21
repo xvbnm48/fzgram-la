@@ -29,8 +29,9 @@ router.put("/follow", requireLogin, (req, res) => {
     {
       $push: { followers: req.user._id },
     },
-    { new: true }
-  ),
+    {
+      new: true,
+    },
     (err, result) => {
       if (err) {
         return res.status(422).json({ error: err });
@@ -42,23 +43,25 @@ router.put("/follow", requireLogin, (req, res) => {
         },
         { new: true }
       )
+        .select("-password")
         .then((result) => {
-          return res.json(result);
+          res.json(result);
         })
         .catch((err) => {
           return res.status(422).json({ error: err });
         });
-    };
+    }
+  );
 });
-
 router.put("/unfollow", requireLogin, (req, res) => {
   User.findByIdAndUpdate(
     req.body.unfollowId,
     {
       $pull: { followers: req.user._id },
     },
-    { new: true }
-  ),
+    {
+      new: true,
+    },
     (err, result) => {
       if (err) {
         return res.status(422).json({ error: err });
@@ -70,13 +73,15 @@ router.put("/unfollow", requireLogin, (req, res) => {
         },
         { new: true }
       )
+        .select("-password")
         .then((result) => {
-          return res.json(result);
+          res.json(result);
         })
         .catch((err) => {
           return res.status(422).json({ error: err });
         });
-    };
+    }
+  );
 });
 
 module.exports = router;
