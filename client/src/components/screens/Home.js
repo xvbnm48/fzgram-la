@@ -3,6 +3,7 @@ import { UserContext } from "../../App";
 
 const Home = () => {
   const [data, setData] = useState();
+
   const { state, dispatch } = useContext(UserContext);
   useEffect(() => {
     fetch("/allpost", {
@@ -33,7 +34,7 @@ const Home = () => {
         console.log(result);
         const newData = data.map((item) => {
           if (item._id === result._id) {
-            return result;
+            return { ...item, likes: result.likes };
           } else {
             return item;
           }
@@ -61,6 +62,35 @@ const Home = () => {
         console.log(result);
         const newData = data.map((item) => {
           if (item._id === result._id) {
+            return { ...item, likes: result.likes };
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const makeComment = (text, postId) => {
+    fetch("/comment", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId,
+        text,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        const newData = data.map((item) => {
+          if (item._id === result._id) {
             return result;
           } else {
             return item;
@@ -72,31 +102,62 @@ const Home = () => {
         console.log(err);
       });
   };
+  const deletePost = (postid) => {
+    fetch(`/deletepost/${postid}`, {
+      method: "delete",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        const newData = data.filter((item) => {
+          return item._id !== result._id;
+        });
+        setData(newData);
+      });
+  };
   return (
     <div className="Home">
       {data &&
         data.map((item) => {
           // console.log(item.postedBy.name);
+          // console.log(item);
           return (
             <div className="card home-card" key={item._id}>
-              <h5>{item.postedBy.name}</h5>
+              <h5>
+                {item.postedBy.name}{" "}
+                {item.postedBy._id === state._id && (
+                  <i
+                    className="material-icons icon_tambahan"
+                    style={{ float: "right" }}
+                    onClick={() => deletePost(item._id)}
+                  >
+                    delete
+                  </i>
+                )}
+              </h5>
               <div className="card-image">
                 <img src={item.photo} alt="foto" />
               </div>
               <div className="card-content">
-                <i className="material-icons" style={{ color: "red" }}>
+                <i
+                  className="material-icons icon_tambahan"
+                  style={{ color: "red" }}
+                >
                   favorite
                 </i>
                 {item.likes.includes(state._id) ? (
                   <i
-                    className="material-icons"
+                    className="material-icons icon_tambahan"
                     onClick={() => unlikePost(item._id)}
                   >
                     thumb_down
                   </i>
                 ) : (
                   <i
-                    className="material-icons"
+                    className="material-icons icon_tambahan"
                     onClick={() => likePost(item._id)}
                   >
                     thumb_up
@@ -106,7 +167,31 @@ const Home = () => {
                 <h6>{item.likes.length} Likes</h6>
                 <h6>{item.title}</h6>
                 <p>{item.body}</p>
-                <input type="text" placeholder="add a comment" />
+                {item.comments.map((record) => {
+                  return (
+                    <h6 key={record._id}>
+                      <span style={{ fontWeight: "600" }}>
+                        {record.postedBy.name}
+                      </span>{" "}
+                      {record.text}
+                    </h6>
+                  );
+                })}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    console.log(e.target[0].value);
+                    makeComment(e.target[0].value, item._id);
+                    e.target.reset();
+                  }}
+                >
+                  <input
+                    // value={name}
+                    // onChange={() => setName("")}
+                    type="text"
+                    placeholder="add a comment"
+                  />
+                </form>
               </div>
             </div>
           );
