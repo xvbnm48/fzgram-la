@@ -64,7 +64,7 @@ router.get("/allpost", requireLogin, (req, res) => {
   // }
   Post.find()
     .populate("postedBy", "_id name")
-    // .populate("comments.postedBy", "_id name")
+    .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });
     })
@@ -105,13 +105,15 @@ router.put("/like", requireLogin, (req, res) => {
     {
       new: true,
     }
-  ).exec({}, (err, result) => {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      res.json(result);
-    }
-  });
+  )
+    .populate("postedBy", "_id name")
+    .exec({}, (err, result) => {
+      if (err) {
+        return res.status(400).json({ error: err });
+      } else {
+        res.json(result);
+      }
+    });
 });
 
 router.put("/unlike", requireLogin, (req, res) => {
@@ -123,13 +125,15 @@ router.put("/unlike", requireLogin, (req, res) => {
     {
       new: true,
     }
-  ).exec({}, (err, result) => {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      res.json(result);
-    }
-  });
+  )
+    // .populate("postedBy", "_id name")
+    .exec({}, (err, result) => {
+      if (err) {
+        return res.status(400).json({ error: err });
+      } else {
+        res.json(result);
+      }
+    });
 });
 
 router.put("/comment", requireLogin, (req, res) => {
@@ -147,11 +151,33 @@ router.put("/comment", requireLogin, (req, res) => {
     }
   )
     .populate("comments.postedBy", "_id name")
+    .populate("postedBy", "_id name")
     .exec({}, (err, result) => {
       if (err) {
         return res.status(400).json({ error: err });
       } else {
         res.json(result);
+      }
+    });
+});
+
+router.delete("/deletepost/:postId", requireLogin, (req, res) => {
+  post
+    .findOne({ _id: req.params.postId })
+    .populate("postedBy", "_id")
+    .exec((err, post) => {
+      if (err || !post) {
+        return res.status(400).json({ error: err });
+      }
+      if (post.postedBy._id.toString() === req.user._id.toString()) {
+        post
+          .remove()
+          .then((result) => {
+            res.json(result);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     });
 });
