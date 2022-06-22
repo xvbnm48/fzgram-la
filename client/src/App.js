@@ -8,6 +8,7 @@ import Signup from "./components/screens/Signup";
 import Profile from "./components/screens/Profile.js";
 import UserProfile from "./components/screens/UserProfile";
 import CretePost from "./components/screens/CretePost";
+import SubscribedUser from "./components/screens/SubscribedUser";
 import { reducer, initialState } from "./reducers/userReducer";
 
 export const UserContext = createContext();
@@ -43,6 +44,9 @@ const Routing = () => {
       </Route>
       <Route path={"/profile/:userId"}>
         <UserProfile />
+      </Route>
+      <Route path="/myfollowingpost">
+        <SubscribedUser />
       </Route>
     </Switch>
   );
