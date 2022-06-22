@@ -29,7 +29,7 @@ const Profile = () => {
       >
         <div>
           <img
-            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+            src={state ? state.pic : "loading"}
             alt=""
             style={{
               width: "160px",
@@ -40,6 +40,7 @@ const Profile = () => {
         </div>
         <div>
           <h4>{state ? state.name : "Loading"}</h4>
+          <h4>{state ? state.email : "Loading"}</h4>
           <div
             style={{
               display: "flex",

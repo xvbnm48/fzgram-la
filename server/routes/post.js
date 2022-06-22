@@ -63,7 +63,7 @@ router.get("/allpost", requireLogin, (req, res) => {
   //   res.status(500).send(error);
   // }
   Post.find()
-    .populate("postedBy", "_id name")
+    .populate("postedBy", "_id name pic")
     .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });
@@ -179,6 +179,18 @@ router.delete("/deletepost/:postId", requireLogin, (req, res) => {
             console.log(err);
           });
       }
+    });
+});
+
+router.get("/getsubpost", requireLogin, (req, res) => {
+  Post.find({ postedBy: { $in: req.user.following } })
+    .populate("postedBy", "_id name")
+    .populate("comments.postedBy", "_id name")
+    .then((posts) => {
+      res.json({ posts });
+    })
+    .catch((err) => {
+      console.log(err);
     });
 });
 

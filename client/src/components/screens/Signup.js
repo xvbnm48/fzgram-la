@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import M from "materialize-css";
 import swal from "sweetalert";
@@ -8,7 +8,33 @@ const Signup = () => {
   const [name, setName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const PostData = () => {
+  const [image, setImage] = React.useState("");
+  const [url, setUrl] = React.useState(undefined);
+  useEffect(() => {
+    if (url) {
+      uploadFields();
+    }
+  }, [url]);
+
+  const uploadPic = () => {
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "Fzgram");
+    data.append("cloud_name", "fariz123");
+    fetch("https://api.cloudinary.com/v1_1/fariz123/image/upload", {
+      method: "post",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setUrl(data.url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const uploadFields = () => {
     if (
       !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
         email
@@ -26,6 +52,7 @@ const Signup = () => {
         name: name,
         password: password,
         email: email,
+        pic: url,
       }),
     })
       .then((res) => res.json())
@@ -44,6 +71,13 @@ const Signup = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
+  const PostData = () => {
+    if (image) {
+      uploadPic();
+    } else {
+      uploadFields();
+    }
   };
   return (
     <div className="mycard">
@@ -67,6 +101,15 @@ const Signup = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <div className="file-field input-field">
+          <div className="btn #64b5f6 blue darken-1">
+            <span>Upload Pic</span>
+            <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+          </div>
+          <div className="file-path-wrapper">
+            <input className="file-path validate" type="text" />
+          </div>
+        </div>
         <button
           className="btn waves-effect waves-light #64b5f6 blue darken-1"
           onClick={() => PostData()}

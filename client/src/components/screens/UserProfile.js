@@ -3,9 +3,12 @@ import { UserContext } from "../../App";
 import { useParams } from "react-router-dom";
 const Profile = () => {
   const [userProfile, setProfile] = React.useState(null);
-  const [showFollow, setShoFollow] = React.useState(true);
+
   const { state, dispatch } = useContext(UserContext);
   const { userId } = useParams();
+  const [showFollow, setShoFollow] = React.useState(
+    state ? !state.following.includes(userId) : true
+  );
   console.log(userId);
   useEffect(() => {
     fetch(`/user/${userId}`, {
@@ -82,6 +85,7 @@ const Profile = () => {
             },
           };
         });
+        setShoFollow(true);
       });
   };
   return (
@@ -98,7 +102,7 @@ const Profile = () => {
           >
             <div>
               <img
-                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                src={userProfile.user.pic}
                 alt=""
                 style={{
                   width: "160px",
