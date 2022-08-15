@@ -51,17 +51,17 @@ router.post("/createPost", requireLogin, async (req, res) => {
   }
 });
 
+// try {
+//   await Post.find()
+//     .populate("postedBy", "_id name")
+//     .then((posts) => {
+//       res.json({ posts });
+//     });
+// } catch (error) {
+//   console.log(error);
+//   res.status(500).send(error);
+// }
 router.get("/allpost", requireLogin, (req, res) => {
-  // try {
-  //   await Post.find()
-  //     .populate("postedBy", "_id name")
-  //     .then((posts) => {
-  //       res.json({ posts });
-  //     });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).send(error);
-  // }
   Post.find()
     .populate("postedBy", "_id name pic")
     .populate("comments.postedBy", "_id name")
@@ -184,7 +184,7 @@ router.delete("/deletepost/:postId", requireLogin, (req, res) => {
 
 router.get("/getsubpost", requireLogin, (req, res) => {
   Post.find({ postedBy: { $in: req.user.following } })
-    .populate("postedBy", "_id name")
+    .populate("postedBy", "_id name pic")
     .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });

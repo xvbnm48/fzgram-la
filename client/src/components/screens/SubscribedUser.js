@@ -92,7 +92,7 @@ const SubscribedUser = () => {
         console.log(result);
         const newData = data.map((item) => {
           if (item._id === result._id) {
-            return result;
+            return { ...item, comments: result.comments };
           } else {
             return item;
           }
@@ -128,6 +128,16 @@ const SubscribedUser = () => {
           return (
             <div className="card home-card" key={item._id}>
               <h5 style={{ padding: "5px" }}>
+                <img
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    marginBottom: "-20px",
+                  }}
+                  src={item.postedBy.pic}
+                  alt=""
+                />
                 <Link
                   to={
                     item.postedBy._id !== state._id
